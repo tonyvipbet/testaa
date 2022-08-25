@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Hello World</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="images/hello-icon-152.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="white"/>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Hello World">
+  <meta name="msapplication-TileImage" content="images/hello-icon-144.png">
+  <meta name="msapplication-TileColor" content="#FFFFFF">
+</head>
+<body class="fullscreen">
+  
+    <video src="https://res.cloudinary.com/tonya2/video/upload/v1655039337/bg_kqlnyj.mp4" autoplay loop playsinline
+        muted></video>
+    <div class="calculator">
+
+        <div class="screen">
+            <div class="screenContent">
+
+                <p id="result"><span id="resultText" onclick="copy()" onmouseleave="restoreText()"
+                        style="color: #373737"></span></p>
+
+
+                <!-- <button id="del">del</button> -->
+
+            </div>
+        </div>
+
+        <div class="numPad">
+
+
+            <div id="1" class="style circle numColor" onclick="get_value(this.id)">1</div>
+            <div id="2" class="style circle numColor" onclick="get_value(this.id)">2</div>
+            <div id="3" class="style circle numColor" onclick="get_value(this.id)">3</div>
+            <div id="4" class="style circle numColor" onclick="get_value(this.id)">4</div>
+            <div id="5" class="style circle numColor" onclick="get_value(this.id)">5</div>
+            <div id="6" class="style circle numColor" onclick="get_value(this.id)">6</div>
+            <div id="7" class="style circle numColor" onclick="get_value(this.id)">7</div>
+            <div id="8" class="style circle numColor" onclick="get_value(this.id)">8</div>
+            <div id="9" class="style circle numColor" onclick="get_value(this.id)">9</div>
+            <div id="del" class="style circle numColor" onclick="get_value(this.id)">Reset</div>
+                
+            </button>
+            <div id="0" class="style circle numColor" onclick="get_value(this.id)">0</div>
+            <div id="ok" class="style circle numColor" onclick="get_value(this.id)">OK</div>
+
+
+        </div>
+
+    </div>
+    <div id="myModal" class="modal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Confirm your phone number</h4>
+
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="plusone">
+                        <p class="resphone">141</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn  btn-lg btn-danger" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-lg btn-success" data-dismiss=""
+                        onclick="confirm()">Yes</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- <button class="clearit" onclick="clearit()"></button> -->
+
+    <script>
+        $(document).on('touchmove', function (e) {
+            e.preventDefault();
+        });
+        phone_number = ''
+        real_phone = ''
+        totaldash = 0
+
+        function wait(ms) {
+            var start = new Date().getTime();
+            var end = start;
+            while (end < start + ms) {
+                end = new Date().getTime();
+            }
+        }
+
+        function sleep(n) {
+            var request = new XMLHttpRequest();
+            request.open('GET', 'http://httpstat.us/200?sleep=' + n, false);
+            request.send(null);
+        };
+
+        function refresh(datait) {
+            // console.log(datait.result);
+            $('.modal-title').html("Thank you for checking in!")
+            $('.modal-body').css('font-size', 35)
+            $('.modal-body').html(datait.result)
+            $('.modal-footer').hide()
+            phone_number = ''
+            real_phone = ''
+            totaldash = 0
+            $("#resultText").html("")
+            // new Promise(resolve => setTimeout(resolve, 5888));
+            // sleep(3000);
+            let delayInMilliseconds = 3888; //1 second
+
+            setTimeout(function () {
+                $('.close').trigger('click');
+                $('.modal-title').html("Confirm your phone number")
+                $('.modal-footer').show()
+                $('.modal-body').css('font-size', 30)
+            }, delayInMilliseconds);
+
+
+            // $('.close').trigger('click');
+            // $('.modal-title').html("Confirm your phone number")
+            // $('.modal-footer').show()
+
+            // await new Promise(resolve => setTimeout(resolve, 5888)); // 3 sec
+            // $('.close').trigger('click');
+            // $('.modal-title').html("Confirm your phone number")
+            // $('.modal-footer').show()
+        }
+
+        function confirm() {
+
+
+
+            // console.log("confirm" + " " + real_phone);
+
+
+            (async () => {
+                const rawResponse = await fetch(
+                    '', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            "Access-Control-Allow-Origin": "*",
+                        },
+                        body: JSON.stringify({
+                            phone: real_phone,
+
+                        })
+                    }).then(function (response) {
+                    // The response is a Response instance.
+                    // You parse the data into a useable format using `.json()`
+                    return response.json();
+                }).then(function (datait) {
+                    // `data` is the parsed version of the JSON returned from the above endpoint.
+                    // { "userId": 1, "id": 1, "title": "...", "body": "..." }
+                    refresh(datait)
+                });;
+
+            })();
+        }
+
+        function get_value(id) {
+            // alert(id)
+            // console.log(real_phone)
+            if (id == "ok") {
+                if (real_phone.length == 10) {
+                    // console.log(real_phone);
+                    // window.location.href = './101menu.html'
+                    // console.log($(".resphone").html())
+
+                    $('#myModal').modal('show');
+                    $(".modal-body").html(phone_number);
+                }
+                return 0;
+            }
+            if (id == "del") {
+                phone_number = ""
+                real_phone = ""
+                totaldash = 0
+                $("#resultText").html("")
+                // console.log("hi")
+            } else {
+
+
+
+
+
+                if ((real_phone).length == 10) {
+
+                    // console.log("reach limit0")
+                    // console.log(real_phone)
+
+                    return;
+
+                } else {
+
+                    phone_number = phone_number + id
+                    real_phone = real_phone + id
+                    // console.log(phone_number)
+                    if ((real_phone).length >= 9) {
+                        $("#resultText").html(phone_number)
+                        return 0;
+                    }
+                    if ((real_phone).length % 6 == 0) {
+                        phone_number += '-'
+                    } else {
+                        if ((real_phone).length % 3 == 0) {
+                            phone_number += '-'
+                        }
+                    }
+                    // console.log(phone_number)
+                    $("#resultText").html(phone_number)
+                    // console.log(phone_number)
+
+                }
+
+            }
+
+
+        }
+    </script>
+
+
+  <script src="js/main.js"></script>
+</body>
+</html>
